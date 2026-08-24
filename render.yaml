@@ -1,6 +1,7 @@
 # ==============================================================================
 # Render Blueprint Specification (render.yaml)
-# Docs: https://render.com/docs/blueprint-spec
+# Official Docs: https://render.com/docs/blueprint-spec
+# Schema: https://render.com/schema/render.yaml.json
 # ==============================================================================
 
 services:
@@ -11,26 +12,23 @@ services:
     name: prarthana-portfolio-api
     runtime: node
     plan: free
+    region: oregon
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: CORS_ORIGIN
-        sync: false
-        # Set in Render dashboard to your frontend URL:
-        # e.g., https://prarthana-portfolio-frontend.onrender.com
       - key: SUPABASE_URL
         sync: false
-        # Paste your Supabase Project URL from Supabase Settings -> API
       - key: SUPABASE_ANON_KEY
         sync: false
-        # Paste your Supabase Anon Key from Supabase Settings -> API
+      - key: CORS_ORIGIN
+        sync: false
 
   # ----------------------------------------------------------------------------
   # 2. React + Vite Frontend Static Site
@@ -38,18 +36,27 @@ services:
   - type: web
     name: prarthana-portfolio-frontend
     runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    autoDeploy: true
+    autoDeployTrigger: commit
     routes:
-      # Single Page Application (SPA) routing fallback
+      # Single Page Application (SPA) routing fallback for React Router
       - type: rewrite
         source: /*
         destination: /index.html
+    headers:
+      # Security & caching headers as per official Render recommendations
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
     envVars:
+      # Automatically references the live URL of your backend web service
       - key: VITE_API_URL
-        sync: false
-        # Set to your backend web service URL:
-        # e.g., https://prarthana-portfolio-api.onrender.com
+        fromService:
+          name: prarthana-portfolio-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
