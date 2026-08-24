@@ -8,7 +8,13 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },
-  "keywords": ["express", "node", "supabase", "portfolio", "api"],
+  "keywords": [
+    "express",
+    "node",
+    "supabase",
+    "portfolio",
+    "api"
+  ],
   "author": "Prarthana Reddy",
   "license": "MIT",
   "dependencies": {
@@ -17,6 +23,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
+    "groq-sdk": "^1.5.0",
     "helmet": "^8.0.0"
   },
   "devDependencies": {

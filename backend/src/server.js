@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import contactRoutes from './routes/contactRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 dotenv.config();
 
@@ -75,6 +76,18 @@ const contactLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate limiter for AI chat (stricter to conserve Groq free tier)
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10,
+  message: {
+    success: false,
+    error: 'Too many AI chat requests. Please wait a minute before trying again.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Root route
 app.get('/', (req, res) => {
   res.json({
@@ -84,6 +97,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: 'GET /api/health',
       contact: 'POST /api/contact',
+      chat: 'POST /api/chat',
     },
   });
 });
@@ -91,6 +105,8 @@ app.get('/', (req, res) => {
 // Mount routes
 app.use('/api', contactRoutes);
 app.use('/api/contact', contactLimiter);
+app.use('/api/chat', chatLimiter);
+app.use('/api', chatRoutes);
 
 // 404 Handler
 app.use((req, res) => {

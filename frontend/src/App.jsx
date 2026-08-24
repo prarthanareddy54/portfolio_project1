@@ -9,6 +9,7 @@ import Skills from './pages/Skills';
 import Projects from './pages/Projects';
 import Contact from './pages/Contact';
 import ResumeView from './pages/ResumeView';
+import ChatBot from './components/ChatBot';
 
 // Auto scroll to top on route change
 function ScrollToTop() {
@@ -66,6 +67,9 @@ export function App() {
 
       {/* Global Toast Alert */}
       <Toast toast={toast} onClose={closeToast} />
+
+      {/* Floating AI Chatbot */}
+      <ChatBot />
     </div>
   );
 }
