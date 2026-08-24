@@ -225,11 +225,15 @@ ${retrievedKnowledge}
       temperature: 0.5,
       max_tokens: 650,
       top_p: 0.9,
+      // Disable Qwen3 chain-of-thought / thinking output
+      reasoning_effort: 'none',
     });
 
-    const reply =
+    // Strip any <think>...</think> blocks the model may still emit
+    const rawReply =
       chatCompletion.choices[0]?.message?.content ||
       "I'm sorry, I couldn't generate a response. Please try again.";
+    const reply = rawReply.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
     return {
       reply,
@@ -249,10 +253,16 @@ ${retrievedKnowledge}
           model: 'llama-3.3-70b-versatile',
           temperature: 0.5,
           max_tokens: 650,
+          reasoning_effort: 'none',
         });
 
+        const fallbackRaw = fallbackCompletion.choices[0]?.message?.content;
+        const fallbackReply = fallbackRaw
+          ? fallbackRaw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim()
+          : fallbackRaw;
+
         return {
-          reply: fallbackCompletion.choices[0]?.message?.content,
+          reply: fallbackReply,
           model: 'llama-3.3-70b-versatile',
           demoMode: false,
         };
