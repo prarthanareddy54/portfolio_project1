@@ -1,8 +1,4 @@
-# ==============================================================================
-# Render Blueprint Specification (render.yaml)
-# Official Docs: https://render.com/docs/blueprint-spec
-# Schema: https://render.com/schema/render.yaml.json
-# ==============================================================================
+version: "1"
 
 services:
   # ----------------------------------------------------------------------------
@@ -46,7 +42,7 @@ services:
         source: /*
         destination: /index.html
     headers:
-      # Security & caching headers as per official Render recommendations
+      # Security & caching headers
       - path: /*
         name: X-Frame-Options
         value: SAMEORIGIN
